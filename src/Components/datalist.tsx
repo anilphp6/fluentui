@@ -248,19 +248,14 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
 
   private _renderRow = (props:any) => {
     const rowStyles =  {
-      root: {
-        borderBottomColor: 'red',
-        fontSize: 10,
-      },
       cell: { paddingTop: 16, },
     }
     if (!props) return null
-    console.log(props);
     return <DetailsRow {...props} styles={rowStyles} />
   }
   
   private _renderItemColumn(item: any, index: any, column: any) {
-    console.log(column.name)
+
     const fieldContent = item[column.fieldName as keyof IColumn] as string;
     if (column.name === 'Name') {
       return <Link href={ item['link']}>{fieldContent}</Link>;
@@ -272,7 +267,6 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   private _onFilter = (text: string | undefined): void => {
-    console.log('newValue-', text);
     this.setState({
       items: text ? this._filterPlainArray(
                         this._allItems,
@@ -323,13 +317,19 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   private checkInputV = (value: string|undefined): string | undefined => {
-    if (value !== undefined && (value.trim() ==='' || value.length > 1024)  ) {
+    if (!value) {
+      return "Please enter valid name";
+    }
+    if (value !== undefined && value.trim() ==='' &&  value.length > 1024 ) {
       return "Please enter valid name";
     }
     return undefined;
   }
   private checkInputLink = (value: string|undefined): string | undefined => {
-   let regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+    let regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+    if (!value) {
+      return undefined;
+    }
     if (value !== undefined && value.trim() !=='' && !regex.test(value)) {
         return "Please enter valid URL";
     }
@@ -337,11 +337,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
   
   private _submitHandler=()=> {
-
     const name = this.checkInputV(this.inputName.current?.value);
     const link = this.checkInputLink(this.inputLink.current?.value);
-
-    console.log(name,link)
     if (name === undefined && link === undefined) {
       alert('submitted');
       this.setState({
@@ -391,7 +388,6 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   _openModal = (action: string, key: any) => {
-  console.log('---',key)
     this.setState({
       isModalOpen: true,
       modalAction: action,
