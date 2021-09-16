@@ -1,3 +1,7 @@
-https://developer.microsoft.com/en-us/fluentui#/controls/web/icon 
+1 text aliggment
 
-UI demo 
+2 hover share
+
+3. search hover double hover
+
+4. not editable

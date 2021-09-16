@@ -3,7 +3,7 @@ import * as React from 'react';
 import { SearchBox, ISearchBoxStyles } from '@fluentui/react/lib/SearchBox';
 import {
   DetailsList, IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, DetailsListLayoutMode, SelectionMode, IColumn, Link,
-  PrimaryButton, TextField, DefaultButton,ITextField
+  PrimaryButton, TextField, DefaultButton,ITextField,DetailsRow
 } from '@fluentui/react/lib';
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import {Dialog, DialogFooter, initializeIcons, IIconProps, mergeStyleSets,IContextualMenuProps  } from '@fluentui/react';
@@ -102,7 +102,7 @@ interface IerrorMessage {
 }
 interface IDetailsListCompactExampleState {
   items: IDetailsListCompactExampleItem[];
-  columns: IColumn[];
+  columns: any[];
   isModalOpen?: boolean;
   modalAction: string;
   error: IerrorMessage;
@@ -112,7 +112,7 @@ interface IDetailsListCompactExampleState {
 
 export class DetailsListCompactExample extends React.Component<{}, IDetailsListCompactExampleState> {
   private _allItems: any[];
-  private _columns: IColumn[];
+  private _columns: any[];
   private inputName: React.RefObject<ITextField>
   private inputLink: React.RefObject<ITextField>;
   constructor(props: {}) {
@@ -127,8 +127,11 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         type: 'Admin',
         link: 'google.com',
         more: <div>
-          <Link href='#' onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev)}}><FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share"/></Link>
-          <IconButton iconProps={moreIcon} menuProps={this._menuItems(0)} />
+          <Link href='#' title={ 'Share'}
+            onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
+            <FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
+          </Link>
+          <IconButton iconProps={moreIcon} menuProps={this._menuItems(0)} title={ 'More'} />
           </div>,
 
       },
@@ -140,8 +143,11 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         type: 'blogger',
         link: 'yahoo.com',
         more: <div>
-          <Link href='#' onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev)}}><FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share"/></Link>
-          <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} />
+          <Link href='#' title={ 'Share'}
+            onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
+            <FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
+          </Link>
+          <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} title={ 'More'} />
           </div>,
 
       }
@@ -155,7 +161,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       data: 'string',
       isPadded: true,},
       { key: 'column2', name: '', fieldName: 'more', minWidth: 100, maxWidth: 200, },
-      { key: 'column4', name: 'Added', fieldName: 'added', minWidth: 100, maxWidth: 200, isResizable: true, isSorted: true,sortAscendingAriaLabel: 'Sorted A to Z',
+      {
+        key: 'column4', name: 'Added', fieldName: 'added', minWidth: 100, maxWidth: 200, isResizable: true, isSorted: true,sortAscendingAriaLabel: 'Sorted A to Z',
       sortDescendingAriaLabel: 'Sorted Z to A',
       onColumnClick: this._onColumnClick,
       data: 'string',
@@ -181,16 +188,19 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         {
           key: 'edit',
           text: 'Edit',
+          title:'Edit',
           onClick: () => { this._openModal('E',id)}
         },
         {
           key: 'share',
           text: 'Share',
+          title: 'Share',
           onClick: () => { this._openModal('S',id)}
         },
         {
           key: 'delete',
           text: 'Delete',
+          title: 'Delete',
           onClick: () => { this._openModal('D',id)}
         }
       ],
@@ -202,7 +212,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     return (
       <div>
         <div className={ classNames.header }> 
-              <ActionButton className={classNames.fontSize} iconProps={addIcon} allowDisabledFocus  onClick={() => { this._openModal('A','add') }}>
+          <ActionButton className={classNames.fontSize} iconProps={addIcon} allowDisabledFocus
+            onClick={() => { this._openModal('A', 'add') }}>
                       New item
                 </ActionButton>
                 <SearchBox
@@ -221,6 +232,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         <DetailsList
           compact={true}
           items={items}
+          onRenderRow={this._renderRow}
           onRenderItemColumn={this._renderItemColumn}
           columns={columns}
           setKey="set"
@@ -233,13 +245,30 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       </div>
     );
   }
+
+  private _renderRow = (props:any) => {
+    const rowStyles =  {
+      root: {
+        borderBottomColor: 'red',
+        fontSize: 10,
+      },
+      cell: { paddingTop: 16, },
+    }
+    if (!props) return null
+    console.log(props);
+    return <DetailsRow {...props} styles={rowStyles} />
+  }
+  
   private _renderItemColumn(item: any, index: any, column: any) {
-    console.log(item,column)
+    console.log(column.name)
     const fieldContent = item[column.fieldName as keyof IColumn] as string;
     if (column.name === 'Name') {
       return <Link href={ item['link']}>{fieldContent}</Link>;
     }
-    return <span>{fieldContent}</span>;
+    if (column.name === '') {
+      return <div style={{ marginTop: '-8px'}}>{fieldContent}</div>;
+    }
+    return <div>{fieldContent}</div>;
   }
 
   private _onFilter = (text: string | undefined): void => {
@@ -270,8 +299,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         {
         this.state.modalAction === 'A' || this.state.modalAction === 'E' ? (
             <>
-              <TextField label="Name" value={ this.state.modalAction === 'E'? this.state.items[this.state.actionKey].name:'' } componentRef={this.inputName}  styles={this._getStyles} required placeholder='Add descriptive name'  errorMessage ={this.state.error.name} />
-              <TextField label="Link" value={ this.state.modalAction === 'E'? this.state.items[this.state.actionKey].link:'' } componentRef={ this.inputLink} styles={this._getStyles} placeholder='Add URL' errorMessage ={this.state.error.link}/>
+              <TextField  label="Name" defaultValue={ this.state.modalAction === 'E' && this.state.items[this.state.actionKey].name } componentRef={this.inputName}  styles={this._getStyles} required placeholder='Add descriptive name'  errorMessage ={this.state.error.name} />
+              <TextField label="Link" defaultValue={ this.state.modalAction === 'E' && this.state.items[this.state.actionKey].link} componentRef={ this.inputLink} styles={this._getStyles} placeholder='Add URL' errorMessage ={this.state.error.link}/>
               <DialogFooter>
                 <PrimaryButton text="Save" onClick={ this._submitHandler} />
                 <DefaultButton text="Cancel" onClick={ this._hideModal }/>
