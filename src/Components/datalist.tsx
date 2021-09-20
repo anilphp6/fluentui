@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { SearchBox, ISearchBoxStyles } from '@fluentui/react/lib/SearchBox';
 import {
-  DetailsList, IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, DetailsListLayoutMode, SelectionMode, IColumn, Link,
+  ShimmeredDetailsList,IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, IButton, SelectionMode, IColumn, Link,
   PrimaryButton, TextField, DefaultButton,ITextField,DetailsRow
 } from '@fluentui/react/lib';
 import { FontIcon } from '@fluentui/react/lib/Icon';
@@ -57,7 +57,7 @@ const classNames = mergeStyleSets({
     padding: '28px',
     'border-radius': '2px',
     'background-clip': 'padding-box',
-    'box-shadow': '0 1.6px 3.6px 0 rgb(0 0 0 / 13%), 0 0.3px 0.9px 0 rgb(0 0 0 / 11%)',
+    'box-shadow': 'none',
     'margin-bottom':'2px'
   },
   fontSize: {
@@ -115,39 +115,40 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   private _columns: any[];
   private inputName: React.RefObject<ITextField>
   private inputLink: React.RefObject<ITextField>;
+  private buttonRef: React.RefObject<IButton>;
   constructor(props: {}) {
     super(props);
 
     this._allItems = [
       {
-        key: 1,
-        name:  'XYZ',
-        added: 'Mohit',
-        owner: 'Mohit',
-        type: 'Admin',
+        key: 0,
+        name:  'Business report FY19',
+        added: '1 days ago',
+        owner: 'Tim debor',
+        type: 'Link',
         link: 'google.com',
         more: <div>
-          <Link href='#' title={ 'Share'}
+          <ActionButton title={'Share'}  className={'hoverEffect'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
-            <FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
-          </Link>
-          <IconButton iconProps={moreIcon} menuProps={this._menuItems(0)} title={ 'More'} />
+            <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
+          </ActionButton >
+            <IconButton iconProps={moreIcon} menuProps={this._menuItems(0)} title={'More'} className={'hoverEffect'}/>
           </div>,
 
       },
       {
-        key: 2,
-        name: 'ABC',
-        added: 'Deepika',
-        owner: 'a',
-        type: 'blogger',
+        key: 1,
+        name: 'Power Bi business report FY21',
+        added: '2 days ago',
+        owner: 'Tim oberio',
+        type: 'Link',
         link: 'yahoo.com',
         more: <div>
-          <Link href='#' title={ 'Share'}
+          <ActionButton title={'Share'}  className={'hoverEffect'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
-            <FontIcon aria-label="Compass" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
-          </Link>
-          <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} title={ 'More'} />
+            <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
+          </ActionButton >
+          <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} title={ 'More'} className={'hoverEffect'}/>
           </div>,
 
       }
@@ -181,6 +182,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     };
     this.inputName = React.createRef<ITextField>();
     this.inputLink = React.createRef<ITextField>();
+    this.buttonRef = React.createRef<IButton>();
   }
   private _menuItems=(id:string|number)=>{
     const menuProps: IContextualMenuProps = {
@@ -208,11 +210,11 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     return menuProps;
   }
   public render(): JSX.Element {
-    const { items,columns } = this.state;
+    const { items, columns } = this.state;
     return (
       <div>
         <div className={ classNames.header }> 
-          <ActionButton className={classNames.fontSize} iconProps={addIcon} allowDisabledFocus
+          <ActionButton className={classNames.fontSize} iconProps={addIcon} allowDisabledFocus componentRef={this.buttonRef}
             onClick={() => { this._openModal('A', 'add') }}>
                       New item
                 </ActionButton>
@@ -229,18 +231,14 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
                   onSearch={newValue => console.log('SearchBox onSearch fired: ' + newValue)}
               />
         </div>
-        <DetailsList
-          compact={true}
-          items={items}
-          onRenderRow={this._renderRow}
-          onRenderItemColumn={this._renderItemColumn}
+      <ShimmeredDetailsList
+          setKey="items"
+          items={this.state.items}
           columns={columns}
-          setKey="set"
-          layoutMode={DetailsListLayoutMode.justified}
-          isHeaderVisible={true}
           selectionMode={SelectionMode.none}
-          selectionPreservedOnEmptyClick={true}
-        />
+          onRenderItemColumn={this._renderItemColumn}
+          enableShimmer={!items}
+          />
         { this._dialog()}
       </div>
     );
@@ -293,8 +291,14 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         {
         this.state.modalAction === 'A' || this.state.modalAction === 'E' ? (
             <>
-              <TextField  label="Name" defaultValue={ this.state.modalAction === 'E' && this.state.items[this.state.actionKey].name } componentRef={this.inputName}  styles={this._getStyles} required placeholder='Add descriptive name'  errorMessage ={this.state.error.name} />
-              <TextField label="Link" defaultValue={ this.state.modalAction === 'E' && this.state.items[this.state.actionKey].link} componentRef={ this.inputLink} styles={this._getStyles} placeholder='Add URL' errorMessage ={this.state.error.link}/>
+              <TextField label="Name"
+                defaultValue={this.state.modalAction === 'E' && this.state.items[this.state.actionKey]&& this.state.items[this.state.actionKey].name}
+                componentRef={this.inputName} styles={this._getStyles} required placeholder='Add descriptive name'
+                errorMessage={this.state.error.name} />
+              <TextField label="Link" defaultValue={this.state.modalAction === 'E' && this.state.items[this.state.actionKey] && this.state.items[this.state.actionKey].link}
+                componentRef={this.inputLink} styles={this._getStyles}
+                placeholder='Add URL' errorMessage={this.state.error.link}
+              />
               <DialogFooter>
                 <PrimaryButton text="Save" onClick={ this._submitHandler} />
                 <DefaultButton text="Cancel" onClick={ this._hideModal }/>
@@ -312,8 +316,13 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     );
   }
 
-  private _deleteHandler=()=> {
-    console.log('deleted.',this.state.actionKey)
+  private _deleteHandler = () => {
+   console.log(this.state.actionKey);
+    this._allItems.splice(this.state.actionKey,1);
+    this.setState({
+      items: [...this._allItems],
+    });
+    this._hideModal();
   }
 
   private checkInputV = (value: string|undefined): string | undefined => {
@@ -340,25 +349,67 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     const name = this.checkInputV(this.inputName.current?.value);
     const link = this.checkInputLink(this.inputLink.current?.value);
     if (name === undefined && link === undefined) {
-      alert('submitted');
       this.setState({
         isModalOpen: false,
         error: {
           link: undefined,
           name: undefined
         }
-      })
+      });
+      this._addedItem({
+        name: this.inputName.current?.value,
+        link: this.inputLink.current?.value,
+        added: "Now",
+        owner: 'xyz-woner',
+        type:'Link',
+      });
+      this.buttonRef.current?.focus();
     } else {
       
       this.setState({
         error: {
           link: link,
-          name: name
+          name: name,
         },
       });
      }
     
   }
+
+  private _addedItem=(items: any)=> {
+    const keyItem = this._allItems.length;
+    if (this.state.actionKey === 'add') {
+      this._allItems.push(
+        {
+          key: keyItem,
+          name: items.name,
+          added: items.added,
+          owner: items.owner,
+          type: items.type,
+          link: items.link,
+          more: <div>
+            <ActionButton title={'Share'} className={'hoverEffect'}
+              onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
+              <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
+            </ActionButton >
+            <IconButton aria-label="More" iconProps={moreIcon} menuProps={this._menuItems(keyItem)} title={'More'} className={'hoverEffect'} />
+          </div>,
+
+        }
+      );
+    } else {
+      this._allItems[this.state.actionKey] = {
+        ...this._allItems[this.state.actionKey],
+        name: items.name,
+        link: items.link
+      }
+    }
+
+    this.setState({
+      items: [...this._allItems],
+    });
+  }
+
   private _getStyles(props: ITextFieldStyleProps): Partial<ITextFieldStyles> {
     return {
       fieldGroup: [
@@ -376,15 +427,16 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
           if (!filters[key as SearchKey]) return true;
           //return filters[key as SearchKey] === item[key as SearchKey];
           const SearchKey = filters[key as SearchKey];
-          return item[key as SearchKey].includes(SearchKey!);
+          return item[key as SearchKey].toLowerCase().includes(SearchKey!.toLowerCase());
         });
     });
   }
   
   _hideModal=()=> {
     this.setState({
-      isModalOpen:false
-    })
+      isModalOpen: false
+    });
+    this.buttonRef.current?.focus();
   }
 
   _openModal = (action: string, key: any) => {
@@ -393,7 +445,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       modalAction: action,
       actionKey: key,
       error: {}
-    })
+    });
+    setTimeout(() => { this.inputName.current?.focus() }, 100);
   }
   
   private _onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
