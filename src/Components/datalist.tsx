@@ -10,10 +10,10 @@ import {Dialog, DialogFooter, initializeIcons, IIconProps, mergeStyleSets,IConte
 import { ActionButton,IconButton } from '@fluentui/react/lib/Button';
 
 initializeIcons();
-
+const INTERVAL_DELAY: number = 1200;
 const searchBoxStyles: Partial<ISearchBoxStyles> = {
   root: {
-    width: 200,
+    width: 256,
     float: 'right',
     '::after': {
       'border': '2px solid #A5A4A2',
@@ -33,13 +33,13 @@ const classNames = mergeStyleSets({
     height: 16,
     width: 16,
   },
-  searchBoxStyles:searchBoxStyles,
+  searchBoxStyles: searchBoxStyles,
   saveStyle: {
     'background': '#F2C811',
     'border-radius': '2px',
     padding: '6px 20px',
     border: 'none',
-    'margin-left':'8px'
+    'margin-left': '8px'
   },
   cancelStyle: {
     'background': '#fff',
@@ -49,16 +49,16 @@ const classNames = mergeStyleSets({
     color: '#323130'
   },
   share: {
-    'margin-right': '10px',
-    color:'#000'
+    'padding': '5px',
+    color: '#000'
   },
   header: {
     background: '#ffffff',
-    padding: '28px',
     'border-radius': '2px',
     'background-clip': 'padding-box',
     'box-shadow': 'none',
-    'margin-bottom':'2px'
+    'margin-bottom': '2px',
+    'padding': '11px 12px 11px 12px',
   },
   fontSize: {
     'font-size': '14px',
@@ -88,9 +88,12 @@ const getDuration = (timeAgoInSeconds: any) => {
   }
 };
 
-const timeAgo = (date:any) => {
-  const timeAgoInSeconds = Math.floor((new Date().valueOf() - new Date(date).valueOf()) / 1000);
-  const i= getDuration(timeAgoInSeconds);
+const timeAgo = (datetimestamp:number) => {
+  const timeAgoInSeconds = Math.floor((new Date().valueOf() - datetimestamp) / 1000);
+  if (timeAgoInSeconds === 0) {
+    return 'Just now';
+  }
+  const i = getDuration(timeAgoInSeconds);
   const interval = i && i.interval ? i.interval : undefined;
   const epoch = i && i.epoch ? i.epoch : undefined;
   const suffix = interval === 1 ? '' : 's';
@@ -158,7 +161,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         type: 'Link',
         link: 'google.com',
         more: <div>
-          <ActionButton title={'Share'}  className={'hoverEffect'}
+          <ActionButton title={'Share'}  className={'hoverEffect shareButton'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
             <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
           </ActionButton >
@@ -174,7 +177,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         type: 'Link',
         link: 'yahoo.com',
         more: <div>
-          <ActionButton title={'Share'}  className={'hoverEffect'}
+          <ActionButton title={'Share'}  className={'hoverEffect shareButton'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
             <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
           </ActionButton >
@@ -186,20 +189,30 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
 
 
     this._columns = [
-      { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true, isSorted: true,sortAscendingAriaLabel: 'Sorted A to Z',
-      sortDescendingAriaLabel: 'Sorted Z to A',
-      onColumnClick: this._onColumnClick,
-      data: 'string',
-      isPadded: true,},
-      { key: 'column2', name: '', fieldName: 'more', minWidth: 100, maxWidth: 200, },
       {
-        key: 'column4', name: 'Added', fieldName: 'added', minWidth: 100, maxWidth: 200, isResizable: true, isSorted: true,sortAscendingAriaLabel: 'Sorted A to Z',
-      sortDescendingAriaLabel: 'Sorted Z to A',
-      onColumnClick: this._onColumnClick,
-      data: 'string',
-      isPadded: true,},
-      { key: 'column5', name: 'Owner', fieldName: 'owner', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column6', name: 'Type', fieldName: 'type', minWidth: 100, maxWidth: 200, isResizable: true },
+        key: 'column1', name: 'Name', fieldName: 'name',Width: 400, isResizable: true, 
+        isSorted: true,
+        sortAscendingAriaLabel: 'Sorted A to Z',
+        sortDescendingAriaLabel: 'Sorted Z to A',
+        onColumnClick: this._onColumnClick,
+        data: 'string',
+        iconClassName:'a',
+        isPadded: true,
+        className:'field-name1'
+      },
+      { key: 'column2', name: '', fieldName: 'more', Width: 50,  className:'field-name2' },
+      {
+        key: 'column4', name: 'Added', fieldName: 'added', Width: 113,
+        isResizable: true, isSorted: true,
+        sortAscendingAriaLabel: 'Sorted A to Z',
+        sortDescendingAriaLabel: 'Sorted Z to A',
+        className:'field-added',
+        onColumnClick: this._onColumnClick,
+        data: 'string',
+          isPadded: true,
+      },
+      { key: 'column5', name: 'Owner', fieldName: 'owner', maxWidth: 113, isResizable: true, className:'field-owner'},
+      { key: 'column6', name: 'Type', fieldName: 'type', maxWidth: 113, isResizable: true,className:'field-type' },
     ];
 
     this.state = {
@@ -251,40 +264,32 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
                 <SearchBox
                   styles={searchBoxStyles}
                   placeholder="Search"
-                  onEscape={ev => {
-                    console.log('Custom onEscape Called');
-                  }}
-                  onClear={ev => {
-                    console.log('Custom onClear Called');
-                  }}
                   onChange={(_, newValue) => this._onFilter(newValue)}
-                  onSearch={newValue => console.log('SearchBox onSearch fired: ' + newValue)}
               />
         </div>
       <ShimmeredDetailsList
-            setKey="items"
-            items={this.state.items}
-            columns={columns}
-            selectionMode={SelectionMode.none}
-            onRenderItemColumn={this._renderItemColumn}
-            enableShimmer={!items}
+          setKey="items"
+          items={this.state.items}
+          columns={columns}
+          selectionMode={SelectionMode.none}
+          onRenderItemColumn={this._renderItemColumn}
+          enableShimmer={!items}
           />
         { this._dialog()}
       </div>
     );
   }
-
-  
   private _renderItemColumn(item: any, index: any, column: any) {
 
     const fieldContent = item[column.fieldName as keyof IColumn] as string;
-    //console.log(column.name);
+
     if (column.name === 'Name') {
-     const link  = item['link'] && item['link'].trim() !==''?item['link']:'#'
-      return <Link href={ link}>{fieldContent}</Link>;
+      const link = item['link'] && item['link'].trim() !== '' ? item['link'] : '#'
+      const text = fieldContent.slice(0, 54) + (fieldContent.length > 54 ? "..." : "");
+      return <Link href={ link}>{text}</Link>;
     }
     if (column.name === 'Added') {
-       return <div className='date-time'>{timeAgo(fieldContent)}</div>
+       return <div className='date-time'>{timeAgo(Number(fieldContent))}</div>
      }
     if (column.name === '') {
       return <div style={{ marginTop: '-8px'}}>{fieldContent}</div>;
@@ -330,10 +335,12 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         {
         this.state.modalAction === 'A' || this.state.modalAction === 'E' ? (
             <>
+              <div className={'area-first'}>
               <TextField label="Name"
                 defaultValue={recordData && recordData.name}
                 componentRef={this.inputName} styles={this._getStyles} required placeholder='Add descriptive name'
-                errorMessage={this.state.error.name} />
+                  errorMessage={this.state.error.name} />
+                </div>
               <TextField label="Link" defaultValue={recordData && recordData.link}
                 componentRef={this.inputLink} styles={this._getStyles}
                 placeholder='Add URL' errorMessage={this.state.error.link}
@@ -356,7 +363,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   private _deleteHandler = () => {
-    this._allItems.splice(this.state.actionKey,1);
+
     this._allItems = this._allItems && this._allItems.filter((item) => {
       return item.key !== this.state.actionKey
     });
@@ -402,7 +409,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         name: this.inputName.current?.value,
         link: this.inputLink.current?.value,
         added: Date.now(),
-        owner: 'xyz-woner',
+        owner: 'Tim oberio',
         type:'Link',
       });
       this.buttonRef.current?.focus();
@@ -419,9 +426,9 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   private _addedItem=(items: any)=> {
-    const keyItem = this._allItems.length;
+    const keyItem = (new Date()).getTime();
     if (this.state.actionKey === 'add') {
-      this._allItems.push(
+      this._allItems.unshift(
         {
           key: keyItem,
           name: items.name,
@@ -430,7 +437,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
           type: items.type,
           link: items.link,
           more: <div>
-            <ActionButton title={'Share'} className={'hoverEffect'}
+            <ActionButton title={'Share'} className={'hoverEffect shareButton'}
               onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
               <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
             </ActionButton >
@@ -440,11 +447,16 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         }
       );
     } else {
-      this._allItems[this.state.actionKey] = {
-        ...this._allItems[this.state.actionKey],
-        name: items.name,
-        link: items.link
-      }
+      this._allItems = this._allItems.map((item) => {
+        if (item.key === this.state.actionKey) {
+          return {
+            ...this._findRecord(),
+            name: items.name,
+            link: items.link
+          }
+        }
+        return item;
+      })
     }
 
     this.setState({
