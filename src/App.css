@@ -1,4 +1,4 @@
-.menuIcon-134{
+i.ms-Button-menuIcon {
   display:none;
 }
 .hoverEffect:hover{
@@ -6,4 +6,11 @@
 }
 .ms-DetailsRow {
   border-bottom: 1px solid #ccc;
+}
+.ms-SearchBox-field:focus  {
+  border: none !important;
+}
+.ms-DetailsRow-fields a.ms-Link{
+	font-size:12px;
+	color:rgb(0, 120, 212) !important;
 }

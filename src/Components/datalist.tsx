@@ -66,6 +66,36 @@ const classNames = mergeStyleSets({
   }
 });
 
+const epochs = [
+  ['year', 31536000],
+  ['month', 2592000],
+  ['day', 86400],
+  ['hour', 3600],
+  ['minute', 60],
+  ['second', 1]
+];
+
+const getDuration = (timeAgoInSeconds: any) => {
+  
+  for (let [name, seconds] of epochs) {
+      const interval = Math.floor(timeAgoInSeconds / Number(seconds));
+      if (interval >= 1) {
+          return {
+              interval: interval,
+              epoch: name
+          };
+      }
+  }
+};
+
+const timeAgo = (date:any) => {
+  const timeAgoInSeconds = Math.floor((new Date().valueOf() - new Date(date).valueOf()) / 1000);
+  const i= getDuration(timeAgoInSeconds);
+  const interval = i && i.interval ? i.interval : undefined;
+  const epoch = i && i.epoch ? i.epoch : undefined;
+  const suffix = interval === 1 ? '' : 's';
+  return `${interval} ${epoch}${suffix} ago`;
+};
 const modelProps:IModalProps = {
   isBlocking: true,
   topOffsetFixed: true,
@@ -123,7 +153,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       {
         key: 0,
         name:  'Business report FY19',
-        added: '1 days ago',
+        added: 1614277800000,
         owner: 'Tim debor',
         type: 'Link',
         link: 'google.com',
@@ -139,7 +169,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       {
         key: 1,
         name: 'Power Bi business report FY21',
-        added: '2 days ago',
+        added: 1621967400000,
         owner: 'Tim oberio',
         type: 'Link',
         link: 'yahoo.com',
@@ -232,32 +262,30 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
               />
         </div>
       <ShimmeredDetailsList
-          setKey="items"
-          items={this.state.items}
-          columns={columns}
-          selectionMode={SelectionMode.none}
-          onRenderItemColumn={this._renderItemColumn}
-          enableShimmer={!items}
+            setKey="items"
+            items={this.state.items}
+            columns={columns}
+            selectionMode={SelectionMode.none}
+            onRenderItemColumn={this._renderItemColumn}
+            enableShimmer={!items}
           />
         { this._dialog()}
       </div>
     );
   }
 
-  private _renderRow = (props:any) => {
-    const rowStyles =  {
-      cell: { paddingTop: 16, },
-    }
-    if (!props) return null
-    return <DetailsRow {...props} styles={rowStyles} />
-  }
   
   private _renderItemColumn(item: any, index: any, column: any) {
 
     const fieldContent = item[column.fieldName as keyof IColumn] as string;
+    //console.log(column.name);
     if (column.name === 'Name') {
-      return <Link href={ item['link']}>{fieldContent}</Link>;
+     const link  = item['link'] && item['link'].trim() !==''?item['link']:'#'
+      return <Link href={ link}>{fieldContent}</Link>;
     }
+    if (column.name === 'Added') {
+       return <div className='date-time'>{timeAgo(fieldContent)}</div>
+     }
     if (column.name === '') {
       return <div style={{ marginTop: '-8px'}}>{fieldContent}</div>;
     }
@@ -276,6 +304,16 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     });
   };
 
+  private _findRecord = () => {
+    if (this.state.modalAction === 'A') {
+      return {
+        name: '',
+        link: ''
+      };
+    } else if (this.state.modalAction === 'E') {
+      return this.state.items && Array.isArray(this.state.items) && this.state.items.find((item) => item.key === this.state.actionKey);
+    }
+  }
   private _dialog = () => {
    
     const dialogContentProps = {
@@ -284,6 +322,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         this.state.modalAction === 'D' ? 'Are you sure you want to delete this resource?' : 'Share',
       closeButtonAriaLabel: 'Close',
     };
+    const recordData = this._findRecord();
     return (
       <Dialog hidden={!this.state.isModalOpen}
         onDismiss={this._hideModal} modalProps={modelProps}
@@ -292,10 +331,10 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         this.state.modalAction === 'A' || this.state.modalAction === 'E' ? (
             <>
               <TextField label="Name"
-                defaultValue={this.state.modalAction === 'E' && this.state.items[this.state.actionKey]&& this.state.items[this.state.actionKey].name}
+                defaultValue={recordData && recordData.name}
                 componentRef={this.inputName} styles={this._getStyles} required placeholder='Add descriptive name'
                 errorMessage={this.state.error.name} />
-              <TextField label="Link" defaultValue={this.state.modalAction === 'E' && this.state.items[this.state.actionKey] && this.state.items[this.state.actionKey].link}
+              <TextField label="Link" defaultValue={recordData && recordData.link}
                 componentRef={this.inputLink} styles={this._getStyles}
                 placeholder='Add URL' errorMessage={this.state.error.link}
               />
@@ -317,8 +356,11 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   }
 
   private _deleteHandler = () => {
-   console.log(this.state.actionKey);
     this._allItems.splice(this.state.actionKey,1);
+    this._allItems = this._allItems && this._allItems.filter((item) => {
+      return item.key !== this.state.actionKey
+    });
+    
     this.setState({
       items: [...this._allItems],
     });
@@ -359,7 +401,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       this._addedItem({
         name: this.inputName.current?.value,
         link: this.inputLink.current?.value,
-        added: "Now",
+        added: Date.now(),
         owner: 'xyz-woner',
         type:'Link',
       });
@@ -473,4 +515,6 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     const key = columnKey as keyof T;
     return items.slice(0).sort((a: T, b: T) => ((isSortedDescending ? a[key] < b[key] : a[key] > b[key]) ? 1 : -1));
   }
+
+  
 }
