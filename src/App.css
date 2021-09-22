@@ -1,60 +1,106 @@
-i.ms-Button-menuIcon {
+.resource-list-items i.ms-Button-menuIcon {
   display:none;
 }
-.ms-DetailsHeader {
+.resource-list-items .ms-DetailsHeader {
   padding-top: 0px;
 }
-.hoverEffect:hover{
+.resource-list-items .hoverEffect:hover{
   background-color:#CCC;
 }
-.field-name.ms-DetailsRow-cell{
+.resource-list-items .field-name.ms-DetailsRow-cell{
   padding-left:24px;
 }
-.ms-DetailsRow {
+.resource-list-items .ms-DetailsRow {
   border-bottom: 1px solid #ccc;
 }
-.ms-SearchBox-field:focus  {
+.resource-list-items .ms-SearchBox-field:focus  {
   border: none !important;
 }
-.ms-DetailsRow-fields a.ms-Link{
+.resource-list-items .ms-DetailsRow-fields a.ms-Link{
   font-size: 14px;
   line-height: 20px;
 	color:#000 !important;
 }
-.ms-DetailsRow-fields{
+.resource-list-items .ms-DetailsRow-fields{
   display: table;
 }
-.ms-Button--action.hoverEffect{
-  margin-top: 8px;
+.resource-list-items .ms-Button--action.hoverEffect{
+  /*margin-top: 8px;*/
+  margin-top: 9px;
+  padding: 5px 13px 14px 3px;
 }
-.area-first{
+.resource-list-items .area-first{
   margin-bottom: 15px;
 }
 
-.ms-DetailsRow-fields .ms-DetailsRow-cell{
+.resource-list-items .ms-DetailsRow-fields .ms-DetailsRow-cell{
   padding: 0px 0px 0px 14px;
   display: table-cell;
   vertical-align: middle;
 }
-.field-name1{
+.resource-list-items .field-name1{
   padding-left: 24px !important;
 }
 @media (min-width: 640px){
-  .ms-Dialog-main {
+  .resource-list-items .ms-Dialog-main {
     min-width: 300px!important;
   }
-  #ModalFocusTrapZone9 {
+  .resource-list-items #ModalFocusTrapZone9 {
     min-width: 300!important;
+  }
+  
+}
+@media (max-width: 640px){
+  .resource-list-items .field-name2{
+    max-width: 40px !important;
+  }
+  .resource-list-items .field-name1{
+    max-width:219px;
+    min-width:219px;
+  }
+  .resource-list-items .ms-DetailsRow-fields .ms-DetailsRow-cell {
+    padding: 0px 0px 0px 20px;
+  }
+}
+@media (max-width: 480px){
+  .resource-list-items .field-added{
+    display: none !important;
+  }
+  .resource-list-items .ms-DetailsHeader div.ms-DetailsHeader-cell:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (min-width: 220px) and (max-width: 479px) {
+  .resource-list-items .field-added{
+    display: none !important;
+  }
+  .resource-list-items .ms-TextField-fieldGroup{
+    width: 240px !important;
+  }
+  .resource-list-items .ms-SearchBox{
+    display:none !important;
+  }
+  .resource-list-items .ms-DetailsHeader div.ms-DetailsHeader-cell:nth-child(5) {
+    display: none !important;
+  }
+  .resource-list-items .shareButton{
+    display: none !important;
+  }
+  .resource-list-items .field-owner{
+    display: none !important;
+  }
+  .resource-list-items .field-type{
+    display: none !important;
+  }
+  .resource-list-items .ms-DetailsHeader div.ms-DetailsHeader-cell:nth-child(8) {
+    display: none !important;
   }
 }
 
 @media (max-width: 1024px){
-  .shareButton{
+  .resource-list-items .shareButton{
     display: none;
   }
-}
-@media (max-width: 320px){
-  .shareButton{
-    display: none;
-  }
+ 
 }

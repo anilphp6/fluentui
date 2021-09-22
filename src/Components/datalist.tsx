@@ -13,6 +13,7 @@ initializeIcons();
 const searchBoxStyles: Partial<ISearchBoxStyles> = {
   root: {
     width: 256,
+    'margin-top':'5px',
     float: 'right',
     '::after': {
       'border': '2px solid #A5A4A2',
@@ -154,7 +155,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     this._allItems = [
       {
         key: 0,
-        name:  'Business report FY19',
+        name:  'Business report FY19Business report FY19Business ',
         added: 1614277800000,
         owner: 'Tim debor',
         type: 'Link',
@@ -189,7 +190,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
 
     this._columns = [
       {
-        key: 'column1', name: 'Name', fieldName: 'name',Width: 400, isResizable: true, 
+        key: 'column1', name: 'Name', fieldName: 'name', isResizable: true, 
         isSorted: true,
         sortAscendingAriaLabel: 'Sorted A to Z',
         sortDescendingAriaLabel: 'Sorted Z to A',
@@ -199,9 +200,9 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         isPadded: true,
         className:'field-name1'
       },
-      { key: 'column2', name: '', fieldName: 'more', Width: 50,  className:'field-name2' },
+      { key: 'column2', name: '', fieldName: 'more', className:'field-name2' },
       {
-        key: 'column4', name: 'Added', fieldName: 'added', Width: 113,
+        key: 'column4', name: 'Added', fieldName: 'added',
         isResizable: true, isSorted: true,
         sortAscendingAriaLabel: 'Sorted A to Z',
         sortDescendingAriaLabel: 'Sorted Z to A',
@@ -210,8 +211,8 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
         data: 'string',
           isPadded: true,
       },
-      { key: 'column5', name: 'Owner', fieldName: 'owner', maxWidth: 113, isResizable: true, className:'field-owner'},
-      { key: 'column6', name: 'Type', fieldName: 'type', maxWidth: 113, isResizable: true,className:'field-type' },
+      { key: 'column5', name: 'Owner', fieldName: 'owner', className:'field-owner'},
+      { key: 'column6', name: 'Type', fieldName: 'type',className:'field-type' },
     ];
 
     this.state = {
@@ -254,7 +255,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
   public render(): JSX.Element {
     const { items, columns } = this.state;
     return (
-      <div>
+      <div className={'resource-list-items'}>
         <div className={ classNames.header }> 
           <ActionButton className={classNames.fontSize} iconProps={addIcon} allowDisabledFocus componentRef={this.buttonRef}
             onClick={() => { this._openModal('A', 'add') }}>
@@ -284,7 +285,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
 
     if (column.name === 'Name') {
       const link = item['link'] && item['link'].trim() !== '' ? item['link'] : '#'
-      const text = fieldContent.slice(0, 54) + (fieldContent.length > 54 ? "..." : "");
+      const text = fieldContent.slice(0, 110) + (fieldContent.length > 110 ? "..." : "");
       return <Link href={ link}>{text}</Link>;
     }
     if (column.name === 'Added') {
@@ -330,7 +331,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     return (
       <Dialog hidden={!this.state.isModalOpen}
         onDismiss={this._hideModal} modalProps={modelProps}
-        dialogContentProps={dialogContentProps}>
+        dialogContentProps={dialogContentProps} className={ 'resource-list-items'}>
         {
         this.state.modalAction === 'A' || this.state.modalAction === 'E' ? (
             <>
