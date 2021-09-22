@@ -285,14 +285,14 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
 
     if (column.name === 'Name') {
       const link = item['link'] && item['link'].trim() !== '' ? item['link'] : '#'
-      const text = fieldContent.slice(0, 110) + (fieldContent.length > 110 ? "..." : "");
-      return <Link href={ link}>{text}</Link>;
+     // const text = fieldContent.slice(0, 110) + (fieldContent.length > 110 ? "..." : "");
+      return <Link href={link}>{fieldContent}</Link>;
     }
     if (column.name === 'Added') {
        return <div className='date-time'>{timeAgo(Number(fieldContent))}</div>
      }
     if (column.name === '') {
-      return <div style={{ marginTop: '-8px'}}>{fieldContent}</div>;
+      return <div>{fieldContent}</div>;
     }
     return <div>{fieldContent}</div>;
   }

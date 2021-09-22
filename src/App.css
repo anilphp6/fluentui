@@ -16,14 +16,14 @@
 .resource-list-items .ms-SearchBox-field:focus  {
   border: none !important;
 }
-.resource-list-items .ms-DetailsRow-fields a.ms-Link{
+.resource-list-items .ms-DetailsRow-fields a.ms-Link {
   font-size: 14px;
   line-height: 20px;
-	color:#000 !important;
-}
-.resource-list-items .ms-DetailsRow-fields{
-  display: table;
-}
+  color: #000!important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+
 .resource-list-items .ms-Button--action.hoverEffect{
   /*margin-top: 8px;*/
   margin-top: 9px;
@@ -34,13 +34,14 @@
 }
 
 .resource-list-items .ms-DetailsRow-fields .ms-DetailsRow-cell{
-  padding: 0px 0px 0px 14px;
-  display: table-cell;
-  vertical-align: middle;
+  padding: 0 0 0 14px;
+  display: flex;
+  align-items: center;
 }
 .resource-list-items .field-name1{
   padding-left: 24px !important;
 }
+
 @media (min-width: 640px){
   .resource-list-items .ms-Dialog-main {
     min-width: 300px!important;
@@ -52,15 +53,15 @@
 }
 @media (max-width: 640px){
   .resource-list-items .field-name2{
-    max-width: 40px !important;
+    max-width: 40px!important;
+    padding-left: 2px !important;
+
   }
   .resource-list-items .field-name1{
     max-width:219px;
     min-width:219px;
   }
-  .resource-list-items .ms-DetailsRow-fields .ms-DetailsRow-cell {
-    padding: 0px 0px 0px 20px;
-  }
+  
 }
 @media (max-width: 480px){
   .resource-list-items .field-added{
@@ -94,6 +95,9 @@
     display: none !important;
   }
   .resource-list-items .ms-DetailsHeader div.ms-DetailsHeader-cell:nth-child(8) {
+    display: none !important;
+  }
+  .resource-list-items .ms-DetailsHeader div.ms-DetailsHeader-cell:nth-child(9) {
     display: none !important;
   }
 }
