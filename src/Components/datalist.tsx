@@ -3,14 +3,13 @@ import * as React from 'react';
 import { SearchBox, ISearchBoxStyles } from '@fluentui/react/lib/SearchBox';
 import {
   ShimmeredDetailsList,IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, IButton, SelectionMode, IColumn, Link,
-  PrimaryButton, TextField, DefaultButton,ITextField,DetailsRow
+  PrimaryButton, TextField, DefaultButton,ITextField
 } from '@fluentui/react/lib';
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import {Dialog, DialogFooter, initializeIcons, IIconProps, mergeStyleSets,IContextualMenuProps  } from '@fluentui/react';
 import { ActionButton,IconButton } from '@fluentui/react/lib/Button';
 
 initializeIcons();
-const INTERVAL_DELAY: number = 1200;
 const searchBoxStyles: Partial<ISearchBoxStyles> = {
   root: {
     width: 256,
