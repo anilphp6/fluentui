@@ -5,6 +5,7 @@
   "dependencies": {
     "@fluentui/cra-template": "8.0.1",
     "@fluentui/react": "^8.30.4",
+    "@fluentui/react-hooks": "^8.3.2",
     "@fluentui/react-icons": "^1.1.139",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

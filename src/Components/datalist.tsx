@@ -2,12 +2,13 @@ import * as React from 'react';
 
 import { SearchBox, ISearchBoxStyles } from '@fluentui/react/lib/SearchBox';
 import {
-  ShimmeredDetailsList,IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, IButton, SelectionMode, IColumn, Link,
+  IModalProps, ITextFieldStyleProps, ITextFieldStyles, DialogType, IButton, IColumn,
   PrimaryButton, TextField, DefaultButton,ITextField
 } from '@fluentui/react/lib';
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import {Dialog, DialogFooter, initializeIcons, IIconProps, mergeStyleSets,IContextualMenuProps  } from '@fluentui/react';
 import { ActionButton,IconButton } from '@fluentui/react/lib/Button';
+import { ShimmeredDetailsListData } from './list'
 
 initializeIcons();
 const searchBoxStyles: Partial<ISearchBoxStyles> = {
@@ -25,7 +26,6 @@ const searchBoxStyles: Partial<ISearchBoxStyles> = {
 const addIcon: IIconProps = { iconName: 'Add', style: { fontSize: 16, height: 16, width: 16 } };
 
 const moreIcon: IIconProps = { iconName: 'More', style: { fontSize: 16, height: 16, width: 16 } };
-
 
 const classNames = mergeStyleSets({
   IconImg: {
@@ -66,39 +66,6 @@ const classNames = mergeStyleSets({
   }
 });
 
-const epochs = [
-  ['year', 31536000],
-  ['month', 2592000],
-  ['day', 86400],
-  ['hour', 3600],
-  ['minute', 60],
-  ['second', 1]
-];
-
-const getDuration = (timeAgoInSeconds: any) => {
-  
-  for (let [name, seconds] of epochs) {
-      const interval = Math.floor(timeAgoInSeconds / Number(seconds));
-      if (interval >= 1) {
-          return {
-              interval: interval,
-              epoch: name
-          };
-      }
-  }
-};
-
-const timeAgo = (datetimestamp:number) => {
-  const timeAgoInSeconds = Math.floor((new Date().valueOf() - datetimestamp) / 1000);
-  if (timeAgoInSeconds === 0) {
-    return 'Just now';
-  }
-  const i = getDuration(timeAgoInSeconds);
-  const interval = i && i.interval ? i.interval : undefined;
-  const epoch = i && i.epoch ? i.epoch : undefined;
-  const suffix = interval === 1 ? '' : 's';
-  return `${interval} ${epoch}${suffix} ago`;
-};
 const modelProps:IModalProps = {
   isBlocking: true,
   topOffsetFixed: true,
@@ -155,11 +122,11 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     this._allItems = [
       {
         key: 0,
-        name:  'Business report FY19Business report FY19Business ',
+        name:  'Business report FY19',
         added: 1614277800000,
         owner: 'Tim debor',
         type: 'Link',
-        link: 'google.com',
+        link: '',
         more: <div>
           <ActionButton title={'Share'}  className={'hoverEffect shareButton'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
@@ -171,20 +138,20 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       },
       {
         key: 1,
-        name: 'Power Bi business report FY21',
-        added: 1621967400000,
-        owner: 'Tim oberio',
+        name:  'Power Bi business report FY21',
+        added: 1614277800000,
+        owner: 'Tim debor',
         type: 'Link',
-        link: 'yahoo.com',
+        link: '',
         more: <div>
           <ActionButton title={'Share'}  className={'hoverEffect shareButton'}
             onClick={(ev?: React.SyntheticEvent<any>) => { console.log(ev) }}>
             <FontIcon aria-label="share" className={[classNames.IconImg, classNames.share].join(' ')} iconName="Share" />
           </ActionButton >
-          <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} title={ 'More'} className={'hoverEffect'}/>
+            <IconButton iconProps={moreIcon} menuProps={this._menuItems(1)} title={'More'} className={'hoverEffect'}/>
           </div>,
 
-      }
+      },
     ];
 
 
@@ -221,7 +188,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
       isModalOpen: false,
       modalAction: 'A',
       error: {},
-      actionKey:''
+      actionKey: 'list',
     };
     this.inputName = React.createRef<ITextField>();
     this.inputLink = React.createRef<ITextField>();
@@ -253,7 +220,7 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     return menuProps;
   }
   public render(): JSX.Element {
-    const { items, columns } = this.state;
+    
     return (
       <div className={'resource-list-items'}>
         <div className={ classNames.header }> 
@@ -267,34 +234,10 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
                   onChange={(_, newValue) => this._onFilter(newValue)}
               />
         </div>
-      <ShimmeredDetailsList
-          setKey="items"
-          items={this.state.items}
-          columns={columns}
-          selectionMode={SelectionMode.none}
-          onRenderItemColumn={this._renderItemColumn}
-          enableShimmer={!items}
-          />
+        {<ShimmeredDetailsListData items={this.state.items} columns={this.state.columns} actionKey={this.state.actionKey}/>}
         { this._dialog()}
       </div>
     );
-  }
-  private _renderItemColumn(item: any, index: any, column: any) {
-
-    const fieldContent = item[column.fieldName as keyof IColumn] as string;
-
-    if (column.name === 'Name') {
-      const link = item['link'] && item['link'].trim() !== '' ? item['link'] : '#'
-     // const text = fieldContent.slice(0, 110) + (fieldContent.length > 110 ? "..." : "");
-      return <Link href={link}>{fieldContent}</Link>;
-    }
-    if (column.name === 'Added') {
-       return <div className='date-time'>{timeAgo(Number(fieldContent))}</div>
-     }
-    if (column.name === '') {
-      return <div>{fieldContent}</div>;
-    }
-    return <div>{fieldContent}</div>;
   }
 
   private _onFilter = (text: string | undefined): void => {
@@ -486,14 +429,14 @@ export class DetailsListCompactExample extends React.Component<{}, IDetailsListC
     });
   }
   
-  _hideModal=()=> {
+  private _hideModal=()=> {
     this.setState({
       isModalOpen: false
     });
     this.buttonRef.current?.focus();
   }
 
-  _openModal = (action: string, key: any) => {
+  private _openModal = (action: string, key: any) => {
     this.setState({
       isModalOpen: true,
       modalAction: action,
