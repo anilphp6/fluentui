@@ -6,7 +6,7 @@ import {
   Link,
 } from "@fluentui/react/lib";
 
-import { IDetailsListCompactExampleItem, IFilter } from "./datalist";
+import { IDetailsListCompactExampleItem } from "./datalist";
 
 import { useSetInterval, useSetTimeout } from "@fluentui/react-hooks";
 
@@ -29,12 +29,7 @@ interface IShimmerState {
   lastIntervalId: number;
   visibleCount: number;
 }
-function wait(ms: number) {
-  var waitDateOne = new Date().valueOf();
-  while (new Date().valueOf() - waitDateOne <= ms) {
-    //Nothing
-  }
-}
+
 export const ShimmeredDetailsListData = (props: AppProps) => {
   const { current: state } = React.useRef<IShimmerState>({
     lastIntervalId: 0,
@@ -53,7 +48,11 @@ export const ShimmeredDetailsListData = (props: AppProps) => {
   const [count, setCount] = React.useState(0);
 
   const updateData = () => {
-    setItems(props.items);
+    setTimeout(() => {
+      setItems([]);
+      setItems(props.items);
+    }, INTERVAL_DELAY);
+  
   };
   const onLoadData = (checked: boolean): void => {
     // add case
@@ -110,6 +109,7 @@ export const ShimmeredDetailsListData = (props: AppProps) => {
     clearInterval(state.lastIntervalId);
   }
   return (
+    props.items.length > 0 ?
     <ShimmeredDetailsList
       setKey="items"
       items={items || []}
@@ -117,7 +117,22 @@ export const ShimmeredDetailsListData = (props: AppProps) => {
       selectionMode={SelectionMode.none}
       onRenderItemColumn={_renderItemColumn}
       enableShimmer={!items}
-    />
+      /> : <ShimmeredDetailsList
+      setKey="items"
+      items={[{
+        key: 0,
+        name: "",
+        added: '',
+        owner: "",
+        type: "",
+        link: "",
+        more: <div className='no-records-found'>No Records found</div>,
+      }]}
+      columns={props.columns}
+      selectionMode={SelectionMode.none}
+      onRenderItemColumn={_renderItemColumn}
+      enableShimmer={!items}
+      />
   );
 };
 
@@ -127,11 +142,10 @@ const _renderItemColumn = (item: any, index: any, column: any) => {
   if (column.name === "Name") {
     const link =
       item["link"] && item["link"].trim() !== "" ? item["link"] : "#";
-    // const text = fieldContent.slice(0, 110) + (fieldContent.length > 110 ? "..." : "");
     return <Link href={link}>{fieldContent}</Link>;
   }
   if (column.name === "Added") {
-    return <div className="date-time">{timeAgo(Number(fieldContent))}</div>;
+    return fieldContent?<div className="date-time">{timeAgo(Number(fieldContent))}</div>:'';
   }
   if (column.name === "") {
     return <div>{fieldContent}</div>;
